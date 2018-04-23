@@ -1,0 +1,66 @@
+package application.model;
+
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
+public class SubCategoria {
+	
+	private final StringProperty subCategoria;
+	private final IntegerProperty total;
+	private int id;
+	private int categoriaId;
+	
+	public SubCategoria() {
+		this(null, 0, -1, -1);
+	}
+	
+	public SubCategoria(String subCategoria, int total, int id, int categoriaId) {
+		this.subCategoria = new SimpleStringProperty(subCategoria);
+		this.total = new SimpleIntegerProperty(total);
+		this.id = id;
+		this.categoriaId = categoriaId;
+	}
+	
+	public int getId() {
+		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	public int getCategoriaId() {
+		return categoriaId;
+	}
+	
+	public void setCategoriaId(int categoriaId) {
+		this.categoriaId = categoriaId;
+	}
+	
+	public String getSubCategoria() {
+		return this.subCategoria.get();
+	}
+	
+	public Integer getTotal() {
+		return this.total.get();
+	}
+	
+	public void setSubCategoria(String subCategoria) {
+		this.subCategoria.set(subCategoria);
+	}
+	
+	public void setTotal(int total) {
+		this.total.set(total);
+	}
+	
+	public StringProperty subCategoriaProperty() {
+		return this.subCategoria;
+	}
+	
+	public IntegerProperty totalProperty() {
+		return this.total;
+	}
+
+}

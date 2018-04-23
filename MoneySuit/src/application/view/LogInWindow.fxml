@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="700.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.view.LogInWindowController">
+   <children>
+      <TabPane layoutX="67.0" layoutY="55.0" prefHeight="350.0" prefWidth="300.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <tabs>
+          <Tab text="Log In">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="270.0" prefWidth="300.0">
+                     <children>
+                        <VBox alignment="CENTER" layoutX="106.0" layoutY="51.0" prefHeight="317.0" prefWidth="300.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <Label text="Usuario:" />
+                              <TextField fx:id="user" maxHeight="27.0" maxWidth="180.0" minHeight="27.0" minWidth="180.0" prefHeight="27.0" prefWidth="180.0">
+                                 <VBox.margin>
+                                    <Insets left="60.0" right="60.0" />
+                                 </VBox.margin>
+                              </TextField>
+                              <Label text="Contraseña:" />
+                              <PasswordField fx:id="pass" maxHeight="27.0" maxWidth="180.0" minHeight="27.0" minWidth="180.0" prefHeight="27.0" prefWidth="180.0">
+                                 <VBox.margin>
+                                    <Insets left="60.0" right="60.0" />
+                                 </VBox.margin>
+                              </PasswordField>
+                              <Button mnemonicParsing="false" onAction="#handleLogIn" text="Entrar" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Register">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <VBox alignment="CENTER" prefHeight="267.0" prefWidth="300.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <Label text="Usuario:" />
+                              <TextField fx:id="user_r" maxHeight="27.0" maxWidth="180.0" minHeight="27.0" minWidth="180.0" prefHeight="27.0" prefWidth="180.0">
+                                 <VBox.margin>
+                                    <Insets left="60.0" right="60.0" />
+                                 </VBox.margin>
+                              </TextField>
+                              <Label text="Contraseña:" />
+                              <PasswordField fx:id="pass_r" maxHeight="27.0" maxWidth="180.0" minHeight="27.0" minWidth="180.0" prefHeight="27.0" prefWidth="180.0">
+                                 <VBox.margin>
+                                    <Insets left="60.0" right="60.0" />
+                                 </VBox.margin>
+                              </PasswordField>
+                              <Label text="Confirmar contraseña:" />
+                              <PasswordField fx:id="pass_cr" maxHeight="27.0" maxWidth="180.0" minHeight="27.0" minWidth="180.0" prefHeight="27.0" prefWidth="180.0" />
+                              <Button mnemonicParsing="false" onAction="#handleRegister" text="Registrar" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>
