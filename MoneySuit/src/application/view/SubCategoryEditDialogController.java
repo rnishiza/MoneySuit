@@ -16,6 +16,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import util.DateUtil;
 
 public class SubCategoryEditDialogController {
 
@@ -44,9 +45,7 @@ public class SubCategoryEditDialogController {
 
 	@FXML
 	private void initialize() {
-		// subCategoriaComboBox.setItems(value);
-		LocalDate date = LocalDate.now();
-		restrictDatePicker(fechaDatePicker, LocalDate.of(date.getYear(), date.getMonth(), 1), date);
+		restrictDatePicker(fechaDatePicker, LocalDate.of(DateUtil.getDate().getYear(), DateUtil.getDate().getMonth(), 1), DateUtil.getDate());
 	}
 
 	public void setDialogStage(Stage dialogStage) {

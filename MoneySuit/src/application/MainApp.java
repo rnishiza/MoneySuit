@@ -152,6 +152,7 @@ public class MainApp extends Application {
 			MainWindowController controller = loader.getController();
 			controller.setMainApp(this);
 			setCategoriaData();
+			controller.updateTotalTable();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

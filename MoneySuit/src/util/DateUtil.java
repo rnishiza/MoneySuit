@@ -4,7 +4,6 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Calendar;
 
 public class DateUtil {
 
@@ -13,6 +12,19 @@ public class DateUtil {
 
 	/** The date formatter. */
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_PATTERN);
+	
+	private static LocalDate date;
+	
+	public static LocalDate getDate() {
+		if(date == null) {
+			date = LocalDate.now();
+		}
+		return date;
+	}
+	
+	public static void setDate(LocalDate date) {
+		DateUtil.date = date;
+	}
 
 	/**
 	 * Returns the given date as a well formatted String. The above defined
@@ -62,14 +74,12 @@ public class DateUtil {
 		return DateUtil.parse(dateString) != null;
 	}
 
-	public static String getYear() {
-		int year = Calendar.getInstance().get(Calendar.YEAR);
-		return String.format("%04d", year);
+	public static String getYear(LocalDate date) {
+		return String.format("%04d", date.getYear());
 	}
 
-	public static String getMonth() {
-		int month = Calendar.getInstance().get(Calendar.MONTH);
-		month++;
+	public static String getMonth(LocalDate date) {
+		int month = date.getMonthValue();
 		String monthString;
 		switch (month) {
 		case 1:

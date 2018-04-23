@@ -66,6 +66,17 @@
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                            </columnResizePolicy>
                         </TableView>
+                        <TableView fx:id="totalTable" layoutX="10.0" layoutY="47.0" maxHeight="52.0" minHeight="52.0" prefHeight="52.0" prefWidth="848.0">
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                           <columns>
+                              <TableColumn fx:id="categoriaTotalColumn" prefWidth="75.0" text="Categoría" />
+                              <TableColumn fx:id="presupuestoTotalColumn" prefWidth="75.0" text="Presupuesto" />
+                              <TableColumn fx:id="gastadoTotalColumn" prefWidth="75.0" text="Gastado" />
+                              <TableColumn fx:id="restanteTotalColumn" prefWidth="75.0" text="Restante" />
+                           </columns>
+                        </TableView>
                         <HBox alignment="BOTTOM_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                            <children>
                               <Button maxWidth="65.0" minWidth="65.0" mnemonicParsing="false" onAction="#handleNewCategory" prefWidth="65.0" text="Nueva" />

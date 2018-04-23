@@ -152,8 +152,8 @@ public class SubCategoryWindowController {
         this.mainApp = mainApp;
         this.categoria = categoria;
         subCategoriaTable.setItems(this.mainApp.getSubCategoriaData(categoria));
-        mainCategoriaLabel.setText(categoria.getCategoria());
-        month_year.setText(DateUtil.getMonth() + " / " + DateUtil.getYear());
+        mainCategoriaLabel.setText(categoria.getCategoria());        
+        month_year.setText(DateUtil.getMonth(DateUtil.getDate()) + " / " + DateUtil.getYear(DateUtil.getDate()));
 	}
 	
 	private SubCategoria getSubcategoriaByID(int id) {

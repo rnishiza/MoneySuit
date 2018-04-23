@@ -1,5 +1,7 @@
 package application.view;
 
+import java.util.List;
+
 import application.MainApp;
 import application.model.Categoria;
 import db.DBConnection;
@@ -23,6 +25,17 @@ public class MainWindowController {
 	private TableColumn<Categoria, Number> gastadoColumn;
 	@FXML
 	private TableColumn<Categoria, Number> restanteColumn;
+	
+	@FXML
+	private TableView<Categoria> totalTable;
+	@FXML
+	private TableColumn<Categoria, String> categoriaTotalColumn;
+	@FXML
+	private TableColumn<Categoria, Number> presupuestoTotalColumn;
+	@FXML
+	private TableColumn<Categoria, Number> gastadoTotalColumn;
+	@FXML
+	private TableColumn<Categoria, Number> restanteTotalColumn;
 
 	@FXML
 	private Label saldoCuentaLabel;
@@ -42,8 +55,12 @@ public class MainWindowController {
 		presupuestoColumn.setCellValueFactory(cellData -> cellData.getValue().presupuestoProperty());
 		gastadoColumn.setCellValueFactory(cellData -> cellData.getValue().gastadoProperty());
 		restanteColumn.setCellValueFactory(cellData -> cellData.getValue().restanteProperty());
+		
+		categoriaTotalColumn.setCellValueFactory(cellData -> cellData.getValue().categoriaProperty());
+		presupuestoTotalColumn.setCellValueFactory(cellData -> cellData.getValue().presupuestoProperty());
+		gastadoTotalColumn.setCellValueFactory(cellData -> cellData.getValue().gastadoProperty());
+		restanteTotalColumn.setCellValueFactory(cellData -> cellData.getValue().restanteProperty());
 
-		mesLabel.setText(DateUtil.getMonth() + " / " + DateUtil.getYear());
 		handleDoubleClick();
 	}
 
@@ -73,6 +90,7 @@ public class MainWindowController {
 			if(mainApp.showWarning("¿Estás seguro?\tSe eliminarán todos los datos de la categoría: " + c.getCategoria())) {
 				DBConnection.deleteCategory(mainApp.getUser(), c);
 				categoriaTable.getItems().remove(selectedIndex);
+				updateTotalTable();
 			}			
 		} else {
 			mainApp.showError("Selecciona una categoria.");
@@ -86,6 +104,7 @@ public class MainWindowController {
 		if (okClicked) {
 			DBConnection.addCategory(mainApp.getUser(), tempCategoria);
 			mainApp.getCategoriaData().add(tempCategoria);
+			updateTotalTable();
 		}
 	}
 
@@ -96,6 +115,7 @@ public class MainWindowController {
 			mainApp.showCategoryEditDialog(selectedCategory);
 			DBConnection.updateCategory(mainApp.getUser(), selectedCategory);
 			mainApp.setCategoriaData();
+			updateTotalTable();
 		} else {
 			mainApp.showError("Selecciona una categoria.");
 		}
@@ -103,7 +123,23 @@ public class MainWindowController {
 
 	public void setMainApp(MainApp mainApp) {
 		this.mainApp = mainApp;
-
+		
+		mesLabel.setText(DateUtil.getMonth(DateUtil.getDate()) + " / " + DateUtil.getYear(DateUtil.getDate()));
 		categoriaTable.setItems(mainApp.getCategoriaData());
+		updateTotalTable();
+	}
+	
+	public void updateTotalTable() {
+		List<Categoria> items = categoriaTable.getItems();
+		double presupuesto = 0.0;
+		double gastado = 0.0;
+		double restante = 0.0;
+		for(Categoria c : items) {
+			presupuesto = presupuesto + c.getPresupuesto();
+			gastado = gastado + c.getGastado();
+			restante = restante + c.getRestante();
+		}
+		totalTable.getItems().clear();
+		totalTable.getItems().add(new Categoria("TOTAL", presupuesto, gastado, restante, 0));
 	}
 }
