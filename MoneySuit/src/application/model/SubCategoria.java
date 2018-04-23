@@ -1,14 +1,14 @@
 package application.model;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class SubCategoria {
 	
 	private final StringProperty subCategoria;
-	private final IntegerProperty total;
+	private final DoubleProperty total;
 	private int id;
 	private int categoriaId;
 	
@@ -16,9 +16,9 @@ public class SubCategoria {
 		this(null, 0, -1, -1);
 	}
 	
-	public SubCategoria(String subCategoria, int total, int id, int categoriaId) {
+	public SubCategoria(String subCategoria, double total, int id, int categoriaId) {
 		this.subCategoria = new SimpleStringProperty(subCategoria);
-		this.total = new SimpleIntegerProperty(total);
+		this.total = new SimpleDoubleProperty(total);
 		this.id = id;
 		this.categoriaId = categoriaId;
 	}
@@ -43,7 +43,7 @@ public class SubCategoria {
 		return this.subCategoria.get();
 	}
 	
-	public Integer getTotal() {
+	public Double getTotal() {
 		return this.total.get();
 	}
 	
@@ -51,7 +51,7 @@ public class SubCategoria {
 		this.subCategoria.set(subCategoria);
 	}
 	
-	public void setTotal(int total) {
+	public void setTotal(double total) {
 		this.total.set(total);
 	}
 	
@@ -59,8 +59,12 @@ public class SubCategoria {
 		return this.subCategoria;
 	}
 	
-	public IntegerProperty totalProperty() {
+	public DoubleProperty totalProperty() {
 		return this.total;
 	}
 
+	@Override
+	public String toString() {
+		return getSubCategoria();
+	}
 }

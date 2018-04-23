@@ -11,8 +11,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import entity.User;
-
 public class MyConnectionUtil{
 	
 	private static Connection conn;
@@ -29,21 +27,16 @@ public class MyConnectionUtil{
 		return conn;
 	}
 
-	private static void openConnection() {
-		
-		try {
-			
+	private static void openConnection() {		
+		try {			
 			if(conn != null && !conn.isClosed()){
 				closeConnection();
-			}
-			
+			}			
 			Class.forName(DRIVER);
-			conn = DriverManager.getConnection(CONNECTION, "sa", "");
-			
+			conn = DriverManager.getConnection(CONNECTION, "sa", "");			
 			if (!exists()) {
 				initDB();
-	        }
-			
+	        }			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

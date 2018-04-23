@@ -75,18 +75,73 @@ public class SubCategoryWindowController {
 	}
 	
 	@FXML
-    private void handleNewSubCategory() {
-        SubCategoria tempCategoria = new SubCategoria();
-        Elemento tempElemento = new Elemento();
-        int okClicked = mainApp.showSubCategoryEditDialog(categoria, tempCategoria, tempElemento);
-        if (okClicked == MainApp.NEW_SUBCATEGORIA) {
-            DBConnection.addSubCategory(categoria, tempCategoria);
-            mainApp.getSubCategoriaData(categoria).add(tempCategoria);
-        } else if (okClicked == MainApp.NEW_ELEMENTO) {
-        		DBConnection.addElemento(getSubcategoriaByID(tempElemento.getSubCategoriaId()), tempElemento);
-        		mainApp.getElementoData(getSubcategoriaByID(tempElemento.getSubCategoriaId())).add(tempElemento);
-        }
-    }
+	private void handleNewSubCategory() {
+		SubCategoria tempCategoria = new SubCategoria();
+		Elemento tempElemento = new Elemento();
+		int okClicked = mainApp.showSubCategoryEditDialog(categoria, tempCategoria, tempElemento);
+		if (okClicked == MainApp.NEW_SUBCATEGORIA) {
+			DBConnection.addSubCategory(categoria, tempCategoria);
+			mainApp.getSubCategoriaData(categoria).add(tempCategoria);
+		} else if (okClicked == MainApp.NEW_ELEMENTO) {
+			SubCategoria sub = getSubcategoriaByID(tempElemento.getSubCategoriaId());
+			DBConnection.addElemento(sub, tempElemento);
+			updateSubCategoryTotal(sub, tempElemento);
+			mainApp.getElementoData(sub).add(tempElemento);
+		}
+	}
+	
+	@FXML 
+	private void handleEditSubCategory() {
+		SubCategoria sub = subCategoriaTable.getSelectionModel().getSelectedItem();
+		Elemento elem = elementoTable.getSelectionModel().getSelectedItem();
+		int okClicked = 0;
+		if(elem != null && sub != null) {
+			okClicked = mainApp.showSubCategoryEditDialog(categoria, sub, elem);
+		} else if (sub != null) {
+			Elemento tempElemento = new Elemento();
+			okClicked = mainApp.showSubCategoryEditDialog(categoria, sub, tempElemento);
+		} else {
+			mainApp.showError("Selecciona un elemento.");
+		}
+		
+		if (MainApp.NEW_SUBCATEGORIA == okClicked) {
+			DBConnection.updateSubCategory(categoria, sub);
+		} else if (MainApp.NEW_ELEMENTO == okClicked && elem != null) {
+			DBConnection.updateElemento(elem, sub);
+			updateSubCategoryTotal(sub, elem);
+		}
+		
+		if(okClicked > 0) {
+			mainApp.setCategoriaData();
+			subCategoriaTable.setItems(this.mainApp.getSubCategoriaData(categoria));
+		}
+		
+	}
+	
+	@FXML
+	private void handleDeleteSubCategory() {
+		SubCategoria sub = subCategoriaTable.getSelectionModel().getSelectedItem();
+		Elemento elem = elementoTable.getSelectionModel().getSelectedItem();
+		if(elem != null && sub != null) {
+			if(mainApp.showWarning("¿Estás seguro?\tSe eliminará el gasto: " + elem.getMotivo())) {
+				DBConnection.deleteElemento(elem, sub);
+				elementoTable.getItems().remove(elem);
+			}
+		} else if (sub != null) {
+			if(mainApp.showWarning("¿Estás seguro?\tSe eliminarán todos los datos de la sub-categoría: " + sub.getSubCategoria())) {
+				DBConnection.deleteSubCategory(categoria, sub);
+				subCategoriaTable.getItems().remove(sub);
+			}
+		} else {
+			mainApp.showError("Selecciona un elemento.");
+		}
+	}
+	
+	private void updateSubCategoryTotal(SubCategoria sub, Elemento elemento) {
+		double total = sub.getTotal();
+		total = total + elemento.getImporte();
+		sub.setTotal(total);
+	}
 	
 	@FXML
 	private void handleBack() {

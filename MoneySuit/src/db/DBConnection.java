@@ -5,6 +5,8 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
 
 import application.model.Categoria;
 import application.model.Elemento;
@@ -40,9 +42,14 @@ public class DBConnection {
 			statement.setString(1, login);
 			statement.setString(2, pass);
 			int i = statement.executeUpdate();
-			if(i>=0) return true;
-			return false;
+			System.out.println("Ejecutando " + statement);
+			if (i>=0) {				
+				return true;
+			} else {
+				return false;
+			}			
 		}catch (SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -54,6 +61,7 @@ public class DBConnection {
 			statement.setString(1, login);
 			statement.setString(2, pass);
 			ResultSet result = statement.executeQuery();
+			System.out.println("Ejecutando " + statement);
 			result.last();
 			if(result != null && result.getRow() > 0) {
 				int id = result.getInt(User.ID);
@@ -74,6 +82,7 @@ public class DBConnection {
 					("SELECT * FROM CATEGORIA WHERE ID_USER = ?");
 			statement.setInt(1, user.getId());
 			ResultSet result = statement.executeQuery();
+			System.out.println("Ejecutando " + statement);
 			while(result.next()) {
 				categoriaData.add(new Categoria(result.getString("NAME"), result.getDouble("PRESUPUESTO"),
 						0.0, result.getDouble("PRESUPUESTO"), result.getInt("ID")));
@@ -91,6 +100,7 @@ public class DBConnection {
 					("SELECT * FROM SUBCATEGORIA WHERE ID_CATEGORIA = ?");
 			statement.setInt(1, categoria.getId());
 			ResultSet result = statement.executeQuery();
+			System.out.println("Ejecutando " + statement);
 			while(result.next()) {
 				subCategoriaData.add(new SubCategoria(result.getString("NAME"), 0, result.getInt("ID"),
 						result.getInt("ID_CATEGORIA")));
@@ -108,6 +118,7 @@ public class DBConnection {
 					("SELECT * FROM ELEMENTO WHERE ID_SUBCATEGORIA = ?");
 			statement.setInt(1, subcategoria.getId());
 			ResultSet result = statement.executeQuery();
+			System.out.println("Ejecutando " + statement);
 			while(result.next()) {
 				elementoData.add(new Elemento(result.getString("MOTIVO"), result.getDate("FECHA").toLocalDate(),
 						result.getDouble("IMPORTE"), result.getString("LUGAR"), result.getString("DESCRIPCION"),
@@ -122,15 +133,18 @@ public class DBConnection {
 	public static boolean addCategory(User user, Categoria categoria) {
 		try {
 			PreparedStatement statement = getCon().prepareStatement
-					("INSERT INTO CATEGORIA VALUES (null, ?, ?, ?) RETURNING ID;");
+					("INSERT INTO CATEGORIA VALUES (null, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
 			statement.setInt(1, user.getId());
 			statement.setString(2, categoria.getCategoria());
 			statement.setDouble(3, categoria.getPresupuesto());
-			ResultSet rs = statement.executeQuery();
+			statement.executeUpdate();
+			System.out.println("Ejecutando: " + statement);
+			ResultSet rs = statement.getGeneratedKeys();
 			rs.next();
 			categoria.setId(rs.getInt(1));
 			return true;
 		} catch (SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -138,14 +152,17 @@ public class DBConnection {
 	public static boolean addSubCategory(Categoria categoria, SubCategoria subCategoria) {
 		try {
 			PreparedStatement statement = getCon().prepareStatement
-					("INSERT INTO SUBCATEGORIA VALUES (null, ?, ?) RETURNING ID;");
+					("INSERT INTO SUBCATEGORIA VALUES (null, ?, ?);", Statement.RETURN_GENERATED_KEYS);
 			statement.setInt(1, categoria.getId());
 			statement.setString(2, subCategoria.getSubCategoria());
-			ResultSet rs = statement.executeQuery();
+			statement.executeUpdate();
+			System.out.println("Ejecutando: " + statement);
+			ResultSet rs = statement.getGeneratedKeys();
 			rs.next();
 			subCategoria.setId(rs.getInt(1));
 			return true;
 		} catch (SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -153,18 +170,21 @@ public class DBConnection {
 	public static boolean addElemento(SubCategoria subCategoria, Elemento elemento) {
 		try {
 			PreparedStatement statement = getCon().prepareStatement
-					("INSERT INTO ELEMENTO VALUES (null, ?, ?, ?, ?, ?, ?) RETURNING ID;");
+					("INSERT INTO ELEMENTO VALUES (null, ?, ?, ?, ?, ?, ?);", Statement.RETURN_GENERATED_KEYS);
 			statement.setInt(1, subCategoria.getId());
 			statement.setString(2, elemento.getMotivo());
 			statement.setDate(3, Date.valueOf(elemento.getFecha()));
 			statement.setDouble(4, elemento.getImporte());
 			statement.setString(5, elemento.getLugar());
 			statement.setString(6, elemento.getDescripcion());
-			ResultSet rs = statement.executeQuery();
+			statement.executeUpdate();
+			System.out.println("Ejecutando: " + statement);
+			ResultSet rs = statement.getGeneratedKeys();
 			rs.next();
-			subCategoria.setId(rs.getInt(1));
+			elemento.setId(rs.getInt(1));
 			return true;
 		} catch (SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -178,9 +198,11 @@ public class DBConnection {
 			statement.setInt(3, categoria.getId());
 			statement.setInt(4, user.getId());
 			int i = statement.executeUpdate();
+			System.out.println("Ejecutando " + statement);
 			if(i>=0) return true;
 			return false;
 		} catch (SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -193,9 +215,11 @@ public class DBConnection {
 			statement.setInt(2, subCategoria.getId());
 			statement.setInt(3, categoria.getId());
 			int i = statement.executeUpdate();
+			System.out.println("Ejecutando " + statement);
 			if(i>=0) return true;
 			return false;
 		} catch (SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -213,37 +237,45 @@ public class DBConnection {
 			statement.setInt(6, elemento.getId());
 			statement.setInt(7, subCategoria.getId());
 			int i = statement.executeUpdate();
+			System.out.println("Ejecutando " + statement);
 			if(i>=0) return true;
 			return false;
 		} catch (SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
 	
 	public static boolean deleteCategory(User user, Categoria categoria) {
 		try {
+			deleteCascade(categoria);
 			PreparedStatement statement = getCon().prepareStatement
 					("DELETE FROM CATEGORIA WHERE ID = ? AND ID_USER = ?;");
 			statement.setInt(1, categoria.getId());
 			statement.setInt(2, user.getId());
 			int i = statement.executeUpdate();
+			System.out.println("Ejecutando " + statement);
 			if(i>=0) return true;
 			return false;
 		} catch (SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
 	
-	public static boolean deleteCategory(Categoria categoria, SubCategoria subCategoria) {
+	public static boolean deleteSubCategory(Categoria categoria, SubCategoria subCategoria) {
 		try {
+			deleteCascade(subCategoria);
 			PreparedStatement statement = getCon().prepareStatement
 					("DELETE FROM SUBCATEGORIA WHERE ID = ? AND ID_CATEGORIA = ?;");
 			statement.setInt(1, subCategoria.getId());
 			statement.setInt(2, categoria.getId());
 			int i = statement.executeUpdate();
+			System.out.println("Ejecutando " + statement);
 			if(i>=0) return true;
 			return false;
 		} catch (SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -255,10 +287,27 @@ public class DBConnection {
 			statement.setInt(1, elemento.getId());
 			statement.setInt(2, subCategoria.getId());
 			int i = statement.executeUpdate();
+			System.out.println("Ejecutando " + statement);
 			if(i>=0) return true;
 			return false;
 		} catch (SQLException e) {
+			e.printStackTrace();
 			return false;
+		}
+	}
+	
+	private static void deleteCascade(Categoria categoria) {
+		List<SubCategoria> subs = getSubCategoriaData(categoria);
+		for(SubCategoria sub : subs) {
+			deleteCascade(sub);
+			deleteSubCategory(categoria, sub);
+		}
+	}
+	
+	private static void deleteCascade(SubCategoria sub) {
+		List<Elemento> elems = getElementoData(sub);
+		for(Elemento elem : elems) {
+			deleteElemento(elem, sub);
 		}
 	}
 

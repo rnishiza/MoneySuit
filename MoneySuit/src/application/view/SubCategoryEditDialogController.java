@@ -1,5 +1,7 @@
 package application.view;
 
+import java.time.LocalDate;
+
 import application.model.Categoria;
 import application.model.Elemento;
 import application.model.SubCategoria;
@@ -9,12 +11,14 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 public class SubCategoryEditDialogController {
-	
+
 	@FXML
 	private ComboBox<SubCategoria> subCategoriaComboBox;
 	@FXML
@@ -27,7 +31,7 @@ public class SubCategoryEditDialogController {
 	private TextField importeField;
 	@FXML
 	private TextField descripcionField;
-	
+
 	@FXML
 	private TextField subCategoriaField;
 
@@ -40,7 +44,9 @@ public class SubCategoryEditDialogController {
 
 	@FXML
 	private void initialize() {
-		//subCategoriaComboBox.setItems(value);
+		// subCategoriaComboBox.setItems(value);
+		LocalDate date = LocalDate.now();
+		restrictDatePicker(fechaDatePicker, LocalDate.of(date.getYear(), date.getMonth(), 1), date);
 	}
 
 	public void setDialogStage(Stage dialogStage) {
@@ -52,7 +58,7 @@ public class SubCategoryEditDialogController {
 		this.categoria = categoria;
 		subCategoriaField.setText(subCategoria.getSubCategoria());
 	}
-	
+
 	public void setElemento(Elemento elemento, ObservableList<SubCategoria> subCategorias) {
 		this.elemento = elemento;
 		fechaDatePicker.setValue(elemento.getFecha());
@@ -60,28 +66,31 @@ public class SubCategoryEditDialogController {
 		motivoField.setText(elemento.getMotivo());
 		importeField.setText(String.valueOf(elemento.getImporte()));
 		descripcionField.setText(elemento.getDescripcion());
-		
+
 		subCategoriaComboBox.setItems(subCategorias);
-		
+
+		if (subCategorias == null)
+			return;
+
 		int index = 0;
 		boolean encontrado = false;
-		for(SubCategoria sc : subCategoriaComboBox.getItems()) {
-			if(elemento.getSubCategoriaId() == sc.getId()) {
+		for (SubCategoria sc : subCategoriaComboBox.getItems()) {
+			if (elemento.getSubCategoriaId() == sc.getId()) {
 				encontrado = true;
 				break;
 			}
 			index++;
 		}
-		
-		if(encontrado) {
+
+		if (encontrado) {
 			subCategoriaComboBox.getSelectionModel().select(index);
 		}
 	}
-	
+
 	public boolean isSubCategoriaOkClicked() {
 		return subCategoriaOkClicked;
 	}
-	
+
 	public boolean isElementOkClicked() {
 		return elementoOkClicked;
 	}
@@ -96,13 +105,13 @@ public class SubCategoryEditDialogController {
 			dialogStage.close();
 		}
 	}
-	
+
 	@FXML
 	private void handleElementoOk() {
-		if(isElementoInputValid()) {
+		if (isElementoInputValid()) {
 			elemento.setDescripcion(descripcionField.getText());
 			elemento.setFecha(fechaDatePicker.getValue());
-			elemento.setImporte(Integer.valueOf(importeField.getText()));
+			elemento.setImporte(Double.valueOf(importeField.getText()));
 			elemento.setLugar(lugarField.getText());
 			elemento.setMotivo(motivoField.getText());
 			elemento.setSubCategoriaId(subCategoriaComboBox.getSelectionModel().getSelectedItem().getId());
@@ -118,64 +127,86 @@ public class SubCategoryEditDialogController {
 
 	private boolean isSubCategoriaInputValid() {
 		String errorMessage = "";
-		
+
 		if (subCategoriaField.getText() == null || subCategoriaField.getText().length() == 0) {
-            errorMessage += "Sub-categoria no valida\n"; 
-        }
-		
+			errorMessage += "Sub-categoria no valida\n";
+		}
+
 		if (errorMessage.length() == 0) {
-            return true;
-        } else {
-        		showError(errorMessage);
-        		return false;
-        }
+			return true;
+		} else {
+			showError(errorMessage);
+			return false;
+		}
 	}
-	
+
 	private boolean isElementoInputValid() {
-		
+
 		String errorMessage = "";
-		
+
 		if (descripcionField.getText() == null || descripcionField.getText().length() == 0) {
-            errorMessage += "Descripcion no valida\n"; 
-        }
-		
+			errorMessage += "Descripcion no valida\n";
+		}
+
 		if (lugarField.getText() == null || lugarField.getText().length() == 0) {
-            errorMessage += "Lugar no valida\n"; 
-        }
-		
+			errorMessage += "Lugar no valida\n";
+		}
+
 		if (motivoField.getText() == null || motivoField.getText().length() == 0) {
-            errorMessage += "Motivo no valida\n"; 
-        }
-		
+			errorMessage += "Motivo no valida\n";
+		}
+
 		if (subCategoriaComboBox.getSelectionModel().getSelectedItem() == null) {
 			errorMessage += "Sub-categoria no valida\n";
 		}
-		
+
 		if (fechaDatePicker.getValue() == null) {
 			errorMessage += "Fecha no valida\n";
 		}
-		
+
 		if (importeField.getText() == null || importeField.getText().length() == 0) {
-            errorMessage += "Importe no valido\n"; 
-        } else {
-            try {
-                Integer.parseInt(importeField.getText());
-            } catch (NumberFormatException e) {
-                errorMessage += "Presupuesto no valido (debe ser un numero)\n"; 
-            }
-        }
-		
+			errorMessage += "Importe no valido\n";
+		} else {
+			try {
+				Double.parseDouble(importeField.getText());
+			} catch (NumberFormatException e) {
+				errorMessage += "Presupuesto no valido (debe ser un numero)\n";
+			}
+		}
+
 		if (errorMessage.length() == 0) {
-            return true;
-        } else {
-        		showError(errorMessage);
-        		return false;
-        }
+			return true;
+		} else {
+			showError(errorMessage);
+			return false;
+		}
 	}
-	
-    public void showError(String message) {
+
+	public void showError(String message) {
 		Alert alert = new Alert(AlertType.ERROR, message, ButtonType.OK);
 		alert.showAndWait();
+	}
+	
+	public void restrictDatePicker(DatePicker datePicker, LocalDate minDate, LocalDate maxDate) {
+	    final Callback<DatePicker, DateCell> dayCellFactory = new Callback<DatePicker, DateCell>() {
+	        @Override
+	        public DateCell call(final DatePicker datePicker) {
+	            return new DateCell() {
+	                @Override
+	                public void updateItem(LocalDate item, boolean empty) {
+	                    super.updateItem(item, empty);
+	                     if (item.isBefore(minDate)) {
+	                        setDisable(true);
+	                        setStyle("-fx-background-color: #ffc0cb;");
+	                    }else if (item.isAfter(maxDate)) {
+	                        setDisable(true);
+	                        setStyle("-fx-background-color: #ffc0cb;");
+	                    }
+	                }
+	            };
+	        }
+	    };
+	    datePicker.setDayCellFactory(dayCellFactory);
 	}
 
 }
